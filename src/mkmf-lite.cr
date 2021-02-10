@@ -101,8 +101,6 @@ module Mkmf::Lite
   def try_to_compile(code, command_options = nil)
     boolean = true
 
-    puts code
-
     begin
       Dir.cd(Dir.tempdir){
         File.write(cpp_source_file, code)
