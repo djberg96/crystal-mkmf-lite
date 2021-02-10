@@ -53,6 +53,26 @@ module Mkmf::Lite
     try_to_execute(code)
   end
 
+  # Check for the presence of the given +function+ in the common header
+  # files, or within any +headers+ that you provide.
+  #
+  # Returns true if found, or false if not found.
+  #
+  def have_func(function, headers : String | Array(String) = [] of String)
+    headers = [headers] if headers.is_a?(String)
+    headers = common_headers if headers.empty?
+
+    io_ptr = IO::Memory.new
+    io_func = IO::Memory.new
+
+    ptr_code = ECR.embed("src/templates/have_func_pointer.ecr", io_ptr)
+    func_code = ECR.embed("src/templates/have_func.ecr", io_func)
+
+    # Check for just the function pointer first. If that fails, then try
+    # to compile with the function declaration.
+    try_to_compile(ptr_code.to_s) || try_to_compile(func_code.to_s)
+  end
+
   # Check for the presence of the given `header` file. You may optionally
   # provide a list of directories to search.
   #
