@@ -1,0 +1,9 @@
+name: mkmf-lite
+version: 0.1.0
+
+authors:
+  - Daniel Berger <djberg96@gmail.com>
+
+crystal: 0.36.1
+
+license: MIT
