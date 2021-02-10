@@ -1,39 +1,53 @@
 # crystal-mkmf-lite
 
-TODO: Write a description here
+A Crystal port of mkmf-lite, a light version of mkmf designed for use within programs.
 
 ## Installation
-
-1. Add the dependency to your `shard.yml`:
-
-   ```yaml
+```yaml
    dependencies:
      crystal-mkmf-lite:
-       github: your-github-user/crystal-mkmf-lite
-   ```
+       github: djberg96/crystal-mkmf-lite
+```
 
-2. Run `shards install`
+And then `shards install`.
 
 ## Usage
 
 ```crystal
-require "crystal-mkmf-lite"
+require "mkmf-lite"
+
+class Something
+  include Mkmf::Lite
+
+  def some_method
+    if have_header("sys/something.h")
+      # You have that header on your local system.
+    else
+      # You don't.
+    end
+  end
+end
 ```
 
-TODO: Write usage instructions here
+## Description
+This is a port of my mkmf-lite Ruby library to Crystal, which in turn is
+meant to be a smaller, lighter version of Ruby's heavy mkmf library.
 
-## Development
+The mkmf-lite library is a module, it's small, and it's designed to be mixed
+into classes. It contains a handful of methods that, most likely, will be
+used in conjunction with C extensions.
 
-TODO: Write development instructions here
+This library does not package C extensions, nor generate a log file or a
+Makefile. It does, however, require that you have a C compiler somewhere on
+your system.
 
-## Contributing
+## Supported Platforms
+Linux and Darwin for now. Other platforms will only be added via
+pull request.
 
-1. Fork it (<https://github.com/your-github-user/crystal-mkmf-lite/fork>)
-2. Create your feature branch (`git checkout -b my-new-feature`)
-3. Commit your changes (`git commit -am 'Add some feature'`)
-4. Push to the branch (`git push origin my-new-feature`)
-5. Create a new Pull Request
+## Copyright
+(C) 2021, Daniel J. Berger
+All Rights Reserved
 
-## Contributors
-
-- [Daniel Berger](https://github.com/your-github-user) - creator and maintainer
+## Author
+Daniel J. Berger
