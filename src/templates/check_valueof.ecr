@@ -1,0 +1,9 @@
+#include <stdio.h>
+<% headers.to_a.each do |header| -%>
+#include <<%= header %>>
+<% end %>
+
+int main(){
+  printf("%d\n", <%= constant %>);
+  return 0;
+}
