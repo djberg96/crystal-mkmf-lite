@@ -14,17 +14,54 @@ module Mkmf::Lite
   end
 
   def cpp_out_file : String
-    "-o conftest.exe"
+    "-o #{cpp_executable}"
   end
 
   def cpp_libraries : String
     "-lrt -ldl -lcrypt -lm"
   end
 
-  def have_header(header : String, directories = [] of String)
+  def cpp_executable : String
+    "conftest.exe"
+  end
+
+  def common_headers : Array
+    ["stdio.h", "stdlib.h"]
+  end
+
+  # Returns the sizeof `type` using `headers`, or common headers if no
+  # headers are specified.
+  #
+  # If this method fails an error is raised. This could happen if the type
+  # can't be found and/or the header files do not include the indicated type.
+  #
+  # Example:
+  #
+  #   class Foo
+  #     include Mkmf::Lite
+  #     utsname = check_sizeof('struct utsname', 'sys/utsname.h')
+  #   end
+  #
+  def check_sizeof(type, headers : String | Array(String) = [] of String)
+    headers = [headers] if headers.is_a?(String)
+    headers = ["stdlib.h"] if headers.empty?
+
+    io = IO::Memory.new
+    ECR.embed("src/templates/check_sizeof.ecr", io)
+    code = io.to_s
+
+    try_to_execute(code)
+  end
+
+  # Check for the presence of the given `header` file. You may optionally
+  # provide a list of directories to search.
+  #
+  # Returns true if found, or false if not found.
+  #
+  def have_header(header : String, directories = [] of String) : Bool
     io = IO::Memory.new
     ECR.embed("src/templates/have_header.ecr", io)
-    template = io.to_s
+    code = io.to_s
 
     if directories.empty?
       options = nil
@@ -34,32 +71,78 @@ module Mkmf::Lite
       options = options.rstrip
     end
 
-    try_to_compile(template, options)
+    try_to_compile(code, options)
   end
 
+  # Create a temporary bit of C source code in the temp directory, and
+  # try to compile it. If it succeeds, return true. Otherwise, return
+  # false.
+  #
   def try_to_compile(code, command_options = nil)
     boolean = true
 
-    Dir.cd(Dir.tempdir){
-      File.write(cpp_source_file, code)
+    begin
+      Dir.cd(Dir.tempdir){
+        File.write(cpp_source_file, code)
 
-      command = if command_options
-        cpp_command + " " + command_options + " "
-      else
-        cpp_command + " "
-      end
+        command = if command_options
+          cpp_command + " " + command_options + " "
+        else
+          cpp_command + " "
+        end
 
-      command += cpp_out_file + " "
-      command += cpp_source_file
+        command += cpp_out_file + " "
+        command += cpp_source_file
 
-      begin
-        result = Process.run(command, shell: true, output: Process::Redirect::Close, error: Process::Redirect::Close)
-        boolean = result.exit_code == 0
-      rescue
-        boolean = false
-      end
-    }
+        begin
+          result = Process.run(command, shell: true, output: Process::Redirect::Close, error: Process::Redirect::Close)
+          boolean = result.exit_code == 0
+        rescue
+          boolean = false
+        end
+      }
+    ensure
+      File.delete(cpp_source_file) if File.exists?(cpp_source_file)
+    end
 
     boolean
+  end
+
+  # Create a temporary bit of C source code in the temp directory, and
+  # try to compile it. If it succeeds attempt to run the generated code.
+  # The code generated is expected to print a number to STDOUT, which
+  # is then grabbed and returned as an integer.
+  #
+  # If the attempt to execute fails for any reason, then 0 is returned.
+  #
+  def try_to_execute(code)
+    result = 0
+
+    begin
+      Dir.cd(Dir.tempdir){
+        File.write(cpp_source_file, code)
+
+        command  = cpp_command + " "
+        command += cpp_out_file + " "
+        command += cpp_source_file
+
+        begin
+          first_command = Process.run(command, shell: true, output: Process::Redirect::Close, error: Process::Redirect::Close)
+          if first_command.exit_code == 0
+            io = IO::Memory.new
+            next_command = Process.run("./#{cpp_executable}", shell: true, output: io)
+            if next_command.exit_code == 0
+              result = io.to_s.to_i
+            end
+          end
+        end
+      }
+    ensure
+      File.delete(cpp_source_file) if File.exists?(cpp_source_file)
+      File.delete(cpp_out_file) if File.exists?(cpp_out_file)
+      File.delete(cpp_executable) if File.exists?(cpp_executable)
+    end
+
+    result
   end
 end
