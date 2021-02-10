@@ -4,9 +4,9 @@ A Crystal port of mkmf-lite, a light version of mkmf designed for use within pro
 
 ## Installation
 ```yaml
-   dependencies:
-     crystal-mkmf-lite:
-       github: djberg96/crystal-mkmf-lite
+dependencies:
+  mkmf-lite:
+    github: djberg96/crystal-mkmf-lite
 ```
 
 And then `shards install`.
