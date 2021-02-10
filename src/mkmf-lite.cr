@@ -38,7 +38,7 @@ module Mkmf::Lite
   end
 
   def try_to_compile(code, command_options = nil)
-    boolean = false
+    boolean = true
 
     Dir.cd(Dir.tempdir){
       File.write(cpp_source_file, code)
@@ -52,14 +52,14 @@ module Mkmf::Lite
       command += cpp_out_file + " "
       command += cpp_source_file
 
-      boolean = system(command)
+      begin
+        result = Process.run(command, shell: true, output: Process::Redirect::Close, error: Process::Redirect::Close)
+        boolean = result.exit_code == 0
+      rescue
+        boolean = false
+      end
     }
+
+    boolean
   end
 end
-
-class Stuff
-  include Mkmf::Lite
-end
-
-stuff = Stuff.new
-stuff.have_header("sys/uname.h")
