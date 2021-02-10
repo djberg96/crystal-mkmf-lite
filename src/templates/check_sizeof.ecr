@@ -1,8 +1,7 @@
 #include <stdio.h>
 <% headers.to_a.each do |header| -%>
-#include <<%= header -%>>
+#include <<%= header %>>
 <% end %>
-
 int conftest_const = (int)(sizeof(<%= type %>));
 
 int main(){
