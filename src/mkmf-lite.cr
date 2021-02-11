@@ -53,6 +53,23 @@ module Mkmf::Lite
     try_to_execute(code)
   end
 
+  # Returns the value of the given `constant` (which could also be a macro)
+  # using `headers`, or common headers if no headers are specified.
+  #
+  # If this method fails an error is raised. This could happen if the constant
+  # can't be found and/or the header files do not include the indicated constant.
+  #
+  def check_valueof(constant, headers : String | Array(String) = [] of String)
+    headers = [headers] if headers.is_a?(String)
+    headers = ["stdlib.h"] if headers.empty?
+
+    io = IO::Memory.new
+    erb = ECR.embed("src/templates/check_valueof.ecr", io)
+    code = io.to_s
+
+    try_to_execute(code)
+  end
+
   # Check for the presence of the given +function+ in the common header
   # files, or within any +headers+ that you provide.
   #
