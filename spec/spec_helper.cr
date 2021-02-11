@@ -1,2 +1,2 @@
 require "spec"
-require "../src/crystal-mkmf-lite"
+require "../src/mkmf-lite"
