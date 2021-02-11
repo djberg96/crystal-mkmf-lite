@@ -111,6 +111,31 @@ module Mkmf::Lite
     try_to_compile(code, options)
   end
 
+  # Checks whether or not the struct of type +struct_type+ contains the
+  # +struct_member+. If it does not, or the struct type cannot be found,
+  # then false is returned.
+  #
+  # An optional list of +headers+ may be specified, in addition to the
+  # common header files that are already searched.
+  #
+  # Example:
+  #
+  #   class Foo
+  #     include Mkmf::Lite
+  #     st_uid = check_struct_member("struct stat", "st_uid", "sys/stat.h")
+  #   end
+  #
+  def have_struct_member(struct_type, struct_member, headers : String | Array(String) = [] of String)
+    headers = [headers] if headers.is_a?(String)
+    headers = common_headers if headers.empty?
+
+    io = IO::Memory.new
+    erb = ECR.embed("src/templates/have_struct_member.ecr", io)
+    code = io.to_s
+
+    try_to_compile(code)
+  end
+
   # Create a temporary bit of C source code in the temp directory, and
   # try to compile it. If it succeeds, return true. Otherwise, return
   # false.
