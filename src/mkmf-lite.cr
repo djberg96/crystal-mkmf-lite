@@ -47,7 +47,7 @@ module Mkmf::Lite
     headers = ["stdlib.h"] if headers.empty?
 
     io = IO::Memory.new
-    ECR.embed("src/templates/check_sizeof.ecr", io)
+    ECR.embed("./src/templates/check_sizeof.ecr", io)
     code = io.to_s
 
     try_to_execute(code)
@@ -64,7 +64,7 @@ module Mkmf::Lite
     headers = ["stdlib.h"] if headers.empty?
 
     io = IO::Memory.new
-    erb = ECR.embed("src/templates/check_valueof.ecr", io)
+    erb = ECR.embed("./src/templates/check_valueof.ecr", io)
     code = io.to_s
 
     try_to_execute(code)
@@ -82,8 +82,8 @@ module Mkmf::Lite
     io_ptr = IO::Memory.new
     io_func = IO::Memory.new
 
-    ptr_code = ECR.embed("src/templates/have_func_pointer.ecr", io_ptr)
-    func_code = ECR.embed("src/templates/have_func.ecr", io_func)
+    ptr_code = ECR.embed("./src/templates/have_func_pointer.ecr", io_ptr)
+    func_code = ECR.embed("./src/templates/have_func.ecr", io_func)
 
     # Check for just the function pointer first. If that fails, then try
     # to compile with the function declaration.
@@ -97,7 +97,7 @@ module Mkmf::Lite
   #
   def have_header(header : String, directories = [] of String) : Bool
     io = IO::Memory.new
-    ECR.embed("src/templates/have_header.ecr", io)
+    ECR.embed("./src/templates/have_header.ecr", io)
     code = io.to_s
 
     if directories.empty?
@@ -130,7 +130,7 @@ module Mkmf::Lite
     headers = common_headers if headers.empty?
 
     io = IO::Memory.new
-    erb = ECR.embed("src/templates/have_struct_member.ecr", io)
+    erb = ECR.embed("./src/templates/have_struct_member.ecr", io)
     code = io.to_s
 
     try_to_compile(code)
