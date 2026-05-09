@@ -29,6 +29,14 @@ class Something
 end
 ```
 
+## Available Methods
+
+* check_sizeof
+* check_valueof
+* have_func
+* have_header
+* have_struct_member
+
 ## Description
 This is a port of my mkmf-lite Ruby library to Crystal, which in turn is
 meant to be a smaller, lighter version of Ruby's heavy mkmf library.
@@ -46,7 +54,7 @@ Linux and Darwin for now. Other platforms will only be added via
 pull request.
 
 ## Copyright
-(C) 2021, Daniel J. Berger
+(C) 2026, Daniel J. Berger
 All Rights Reserved
 
 ## Author
