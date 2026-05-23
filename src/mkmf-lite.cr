@@ -39,7 +39,9 @@ module Mkmf::Lite
     end
   end
 
-  def cpp_defs : String?; nil; end
+  def cpp_defs : String?
+    nil
+  end
 
   def common_headers : Array(String)
     ["stdio.h", "stdlib.h"]
@@ -205,7 +207,7 @@ module Mkmf::Lite
     boolean = true
 
     begin
-      Dir.cd(Dir.tempdir){
+      Dir.cd(Dir.tempdir) {
         File.write(cpp_source_file, code)
 
         command = build_compile_command(command_options, library_options)
@@ -235,7 +237,7 @@ module Mkmf::Lite
     result = 0
 
     begin
-      Dir.cd(Dir.tempdir){
+      Dir.cd(Dir.tempdir) {
         File.write(cpp_source_file, code)
 
         command = build_compile_command(command_options)
@@ -259,7 +261,7 @@ module Mkmf::Lite
     result
   end
 
-  private def memoize(key : String)
+  private def memoize(key : String, &)
     cache = (@mkmf_lite_cache ||= {} of String => Bool | Int32)
     return cache[key] if cache.has_key?(key)
 
