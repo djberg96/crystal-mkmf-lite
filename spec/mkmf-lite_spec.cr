@@ -46,6 +46,21 @@ describe Mkmf::Lite do
     end
   end
 
+  describe "have_library" do
+    example "have_library can detect a system library" do
+      subject.have_library("m", "pow", "math.h").should eq(true)
+      subject.have_library("m").should eq(true)
+    end
+  end
+
+  describe "check_offsetof" do
+    example "check_offsetof returns an integer offset" do
+      offset = subject.check_offsetof(st_type, st_member, st_header)
+      offset.should be_a(Int32)
+      offset.should be > 0
+    end
+  end
+
   describe "check_valueof" do
     example "check_valueof returns an integer value" do
       value = subject.check_valueof("EOF")
