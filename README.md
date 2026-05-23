@@ -32,9 +32,11 @@ end
 ## Available Methods
 
 * check_sizeof
+* check_offsetof
 * check_valueof
 * have_func
 * have_header
+* have_library
 * have_struct_member
 
 ## Description

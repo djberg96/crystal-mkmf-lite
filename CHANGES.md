@@ -1,4 +1,4 @@
-## Unreleased
+## 0.2.0 - 22-May-2026
 * Added `have_library`, including optional function/header checks and support
   for library names with or without a leading `lib`.
 * Added `check_offsetof`.

@@ -1,7 +1,7 @@
 require "ecr/macros"
 
 module Mkmf::Lite
-  VERSION = "0.1.0"
+  VERSION = "0.2.0"
 
   @cpp_command : String?
   @cpp_libraries : String?
